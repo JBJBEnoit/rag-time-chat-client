@@ -119,7 +119,7 @@ const handleSendMessage = ()=>{
 return (
     <div className="chatContainer">
     <h2 style={{color: "#b3272d"}}>Chat About Fanshawe SOAR</h2>
-    <p>This chatbot answers questions based on the <a href="https://ecampusontario.pressbooks.pub/fanshawesoar/" target="_blank" rel="noreferrer">Fanshawe SOAR</a> student success handbook</p>
+    <p>This chatbot provides responses based on the <a href="https://ecampusontario.pressbooks.pub/fanshawesoar/" target="_blank" rel="noreferrer">Fanshawe SOAR</a> student success handbook</p>
     <div className="usersList">
         <ChatMessageList messages={state.messages} currentUser={"student-user"}></ChatMessageList>
     </div>
