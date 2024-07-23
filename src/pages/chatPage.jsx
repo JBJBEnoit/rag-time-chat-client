@@ -33,16 +33,6 @@ useEffect(() => {
 
 }, []);
 
-// useEffect(() => {
-
-//     if (state.response && state.response.length > 0)
-//     {
-//         outputDiv.current.innerHTML = state.response;
-//     }
-    
-
-// }, [state.response])
-
 const connectToServer = ()=>{
     try {
         const socket = io.connect(process.env.REACT_APP_API_URL, {
@@ -68,19 +58,6 @@ const socketEmit = ()=>{
 
     state.socket.emit("query", {query_string: state.query, title: "Fanshawe SOAR", instructions: instructions});
     state.socket.on("response", (response) => {console.info("%o", response); setState({response: response.response_string, showSpinner: false, messages: [...state.messages, {from: "student-user", text: state.query}, {from: "chatbot", text: response.response_string}]})});
-    // state.socket.on("response-update", (response) => {
-
-    //     console.log("received response: " + response.response_string);
-        
-    //     // if (msgArr.length === 0) {
-    //     //     msgArr = [{from: "student-user", text: state.query}, {from: "chatbot", text: ''}];
-    //     // }
-
-    //     if (state.messages.length > 0)
-    //         console.log(state.messages[state.messages.length - 1].text);
-
-    //     setState({messages: [...state.messages, {from: "student-user", text: state.query}, {from: "chatbot", text: response.response_string}]});
-    // })
 };
 
 const handleSendMessage = ()=>{
