@@ -3,6 +3,7 @@ import io from "socket.io-client";
 import ChatMessageList from '../components/chatmessagelist'
 import { TextField, Box, Modal } from '@mui/material';
 import {RotatingSquare} from 'react-loader-spinner';
+import { useLocation } from 'react-router-dom';
 
 const ChatPage = () => {
 
@@ -15,23 +16,69 @@ const initialState = {
     query: '',
     response: '',
     messages: [],
-    showSpinner: false
+    showSpinner: false,
+    bookName: null,
+    bookURL: null,
+    showErrorModal: false,
+    errorMessage: '',
+    chatIntro: ''
 }
 
 const reducer = (state, newState) => ({...state, ...newState});
 const [state, setState] = useReducer(reducer, initialState);
 const instructions = "You are a helpful academic success advisor at Fanshawe College. Please answer student questions about how to be a successful student at Fanshawe College. Please base your answers to any inquiries on the provided context from the FanshaweSOAR textbook.";
+const location = useLocation();
 
 useEffect(() => {
 
-    if (alreadyConnected.current)
+    const queryParams = new URLSearchParams(location.search);
+    const bookId = queryParams.get('ecampusontarioName');
+    const userId = queryParams.get('user');
+    if (bookId && userId){
+        console.log("Book ID: %o", bookId);
+        console.log("User ID: %o", userId);
+        getBookInfo(bookId, userId);
+    }
+    else {
+        
+        // For now make Fanshawe SOAR the default book
+        getBookInfo("fanshawesoar", "jben");
+    }
+
+}, [location.search]);
+
+useEffect(() => {
+    if (alreadyConnected.current || !state.bookName || !state.bookURL)
     {
         return;
     }
-        connectToServer();
-        alreadyConnected.current = true;
+    connectToServer();
+    alreadyConnected.current = true;
 
-}, []);
+}, [state.bookName, state.bookURL]);
+
+const getBookInfo = async (bookId, userId) => {
+    let bookInfo = await fetch(`${process.env.REACT_APP_API_URL}api/book-info`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({bookId: bookId, userId: userId})
+    });
+
+    const result = await bookInfo.json();
+    console.info("Book Info: %o", result);
+        if (result.error){
+            setState({errorMessage: result.error.message, showErrorModal: true});
+            return;
+        }
+        else {
+
+            setState({bookName: result.bookName, bookURL: result.bookURL, chatIntro: result.chatIntro});
+            console.log("Book Name: %o", result.bookName);
+            console.log("Book URL: %o", result.bookURL);
+        }
+};
 
 const connectToServer = ()=>{
     try {
@@ -49,14 +96,14 @@ const connectToServer = ()=>{
     } catch (err) {
 
         console.log(err);
-        setState({ snackbarMsg: "some other problem occurred" });
+        setState({ errorMessage: "some other problem occurred", showErrorModal: true });
     }
 }
 
 
 const socketEmit = ()=>{
 
-    state.socket.emit("query", {query_string: state.query, title: "Fanshawe SOAR", instructions: instructions});
+    state.socket.emit("query", {query_string: state.query, title: state.bookName});
     state.socket.on("response", (response) => {console.info("%o", response); setState({response: response.response_string, showSpinner: false, messages: [...state.messages, {from: "student-user", text: state.query}, {from: "chatbot", text: response.response_string}]})});
 };
 
@@ -95,8 +142,8 @@ const handleSendMessage = ()=>{
 
 return (
     <div className="chatContainer">
-    <h2 style={{color: "#b3272d"}}>Chat About Fanshawe SOAR</h2>
-    <p>This chatbot provides responses based on the <a href="https://ecampusontario.pressbooks.pub/fanshawesoar/" target="_blank" rel="noreferrer">Fanshawe SOAR</a> student success handbook</p>
+    <h2 style={{color: "#b3272d"}}>Chat About {state.bookName}</h2>
+    <p>This chatbot provides responses based on the <a href={state.bookURL} target="_blank" rel="noreferrer">{state.bookName}</a> text</p>
     <div className="usersList">
         <ChatMessageList messages={state.messages} currentUser={"student-user"}></ChatMessageList>
     </div>
@@ -106,7 +153,7 @@ return (
         fullWidth={true}
         style={{marginBottom: "1.5rem"}}
         onChange={(e) => {setState({query: e.target.value})}}
-        placeholder="Ask me anything about how to be a successful student at Fanshawe..."
+        placeholder={state.chatIntro}
         autoFocus={true}
         required
         onKeyPress={(e) => {
@@ -116,19 +163,26 @@ return (
         }}
         value={state.query}
         />
-
-        {/* <button onClick={btnHandler}>Submit</button> */}
     </Box>
 
     <Modal onClose={()=>{}} 
         open={state.showSpinner}
         style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
-    <div id="loading-dots" className="spinner-box">
+        <div id="loading-dots" className="spinner-box">
             <p>Composing my best response</p>
             <RotatingSquare color="#e2231a"/>
             <p>This may take a few moments</p>
         </div>
 
+    </Modal>
+
+    <Modal onClose={()=>{setState({showErrorModal: false})}}
+        open={state.showErrorModal}
+        style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
+        <div id="error-box">
+            <h3>Oops! Something went wrong...</h3>
+            <p>{state.errorMessage}</p>
+        </div>
     </Modal>
     </div>
 )
