@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/rag-time-chat-client/static/css/main.145fbbbb.css",
-    "main.js": "/rag-time-chat-client/static/js/main.873b6150.js",
+    "main.css": "/rag-time-chat-client/static/css/main.7c5a051f.css",
+    "main.js": "/rag-time-chat-client/static/js/main.db03ee1d.js",
     "static/js/453.f154ee84.chunk.js": "/rag-time-chat-client/static/js/453.f154ee84.chunk.js",
     "index.html": "/rag-time-chat-client/index.html",
-    "main.145fbbbb.css.map": "/rag-time-chat-client/static/css/main.145fbbbb.css.map",
-    "main.873b6150.js.map": "/rag-time-chat-client/static/js/main.873b6150.js.map",
+    "main.7c5a051f.css.map": "/rag-time-chat-client/static/css/main.7c5a051f.css.map",
+    "main.db03ee1d.js.map": "/rag-time-chat-client/static/js/main.db03ee1d.js.map",
     "453.f154ee84.chunk.js.map": "/rag-time-chat-client/static/js/453.f154ee84.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.145fbbbb.css",
-    "static/js/main.873b6150.js"
+    "static/css/main.7c5a051f.css",
+    "static/js/main.db03ee1d.js"
   ]
 }
