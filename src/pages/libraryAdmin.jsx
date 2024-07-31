@@ -89,7 +89,7 @@ const LibraryAdmin = () => {
                     <h2>Book Added</h2>
                     <p>Title: {state.bookTitle}</p>
                     <p>Book ID: {state.bookId}</p>
-                    <p>Access your book at: {process.env.REACT_APP_HOST}?ecampusontarioName={state.bookId}&user=YOUR_USER_NAME</p>
+                    <p>Access your book at: {process.env.REACT_APP_HOST}#?ecampusontarioName={state.bookId}&user=YOUR_USER_NAME</p>
                     <Button onClick={clear} variant="contained">Add Another Book</Button>
                 </div>}
                 <Modal open={state.apiError} onClose={() => setState({apiError: ''})}>
