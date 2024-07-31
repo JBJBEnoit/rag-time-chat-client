@@ -7,8 +7,8 @@ import LibraryAdmin from './pages/libraryAdmin';
 function App() {
   return (
     <Routes>
-        <Route path="/rag-time-chat-client" element={<ChatPage />} />
-        <Route path="rag-time-chat-client/library-admin" element={<LibraryAdmin />} />
+        <Route path="/" element={<ChatPage />} />
+        <Route path="/library-admin" element={<LibraryAdmin />} />
     </Routes>
   );
 }
