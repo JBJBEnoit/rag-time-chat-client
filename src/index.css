@@ -61,12 +61,12 @@ code {
   width: 60%;
 }
 
-.adminContainer > button {
+.adminContainer > button,  .error-box > button{
   background-color: #5731a2;
   color: white;
 }
 
-.adminContainer > button:hover {
+.adminContainer > button:hover, .error-box > button:hover {
   background-color: #3f0f9d;
   color: white
 }

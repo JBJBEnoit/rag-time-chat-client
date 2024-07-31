@@ -1,7 +1,7 @@
 import React, {useReducer, useEffect, useRef} from 'react'
 import io from "socket.io-client";
 import ChatMessageList from '../components/chatmessagelist'
-import { TextField, Box, Modal } from '@mui/material';
+import { TextField, Box, Modal, Button } from '@mui/material';
 import {RotatingSquare} from 'react-loader-spinner';
 import { useLocation } from 'react-router-dom';
 
@@ -32,7 +32,7 @@ const location = useLocation();
 useEffect(() => {
 
     const queryParams = new URLSearchParams(location.search);
-    const bookId = queryParams.get('ecampusontarioName');
+    const bookId = queryParams.get('id');
     const userId = queryParams.get('user');
     if (bookId && userId){
         console.log("Book ID: %o", bookId);
@@ -69,7 +69,7 @@ const getBookInfo = async (bookId, userId) => {
     const result = await bookInfo.json();
     console.info("Book Info: %o", result);
         if (result.error){
-            setState({errorMessage: result.error.message, showErrorModal: true});
+            setState({errorMessage: "Could not load book. Check id and user in URL and try again.", showErrorModal: true});
             return;
         }
         else {
@@ -175,15 +175,15 @@ return (
             <RotatingSquare color="#e2231a"/>
             <p>This may take a few moments</p>
         </div>
-
     </Modal>
 
     <Modal onClose={()=>{setState({showErrorModal: false})}}
         open={state.showErrorModal}
         style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
-        <div id="error-box">
+        <div id="error-box" className="error-box">
             <h3>Oops! Something went wrong...</h3>
             <p>{state.errorMessage}</p>
+            <Button onClick={() => setState({showErrorModal: false})}>Close</Button>
         </div>
     </Modal>
     </>
