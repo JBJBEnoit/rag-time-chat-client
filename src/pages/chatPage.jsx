@@ -141,7 +141,8 @@ const handleSendMessage = ()=>{
 };
 
 return (
-    <div className="chatContainer">
+    <>
+    { state.bookName ? <div className="chatContainer">
     <h2 style={{color: "#b3272d"}}>Chat About {state.bookName}</h2>
     <p>This chatbot provides responses based on the <a href={state.bookURL} target="_blank" rel="noreferrer">{state.bookName}</a> text</p>
     <div className="usersList">
@@ -164,6 +165,7 @@ return (
         value={state.query}
         />
     </Box>
+    </div> : <div></div> }
 
     <Modal onClose={()=>{}} 
         open={state.showSpinner}
@@ -184,7 +186,7 @@ return (
             <p>{state.errorMessage}</p>
         </div>
     </Modal>
-    </div>
+    </>
 )
 
 }

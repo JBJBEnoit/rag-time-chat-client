@@ -78,7 +78,7 @@ code {
   width: 85%;
 }
 
-.spinner-box {
+.spinner-box, .error-box {
   font-weight: bold;
   color: #d42621;
   display: flex;
