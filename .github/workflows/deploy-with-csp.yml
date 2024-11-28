@@ -1,0 +1,43 @@
+name: Deploy with CSP Header
+
+on:
+  push:
+    branches:
+      - main # Adjust this to your default branch name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout your code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Build your site (if needed)
+      - name: Build site
+        run: |
+          npm ci
+          npm run build # Adjust this to match your build script
+
+      # Step 3: Add a CSP header to the output
+      - name: Add CSP Header
+        run: |
+          echo '/ Content-Security-Policy: 
+          default-src \'self\'; 
+          script-src \'self\'; 
+          connect-src \'self\' wss://rag-time-production.up.railway.app/ https://rag-time-production.up.railway.app/; 
+          img-src \'self\'; 
+          style-src \'self\' \'unsafe-inline\'; 
+          font-src \'self\'; 
+          object-src \'none\'; 
+          frame-src \'none\';' > ./build/_headers
+
+      # Step 4: Deploy to GitHub Pages
+      - name: Upload artifact for deployment
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./build
+
+      - name: Deploy to Pages
+        uses: actions/deploy-pages@v2

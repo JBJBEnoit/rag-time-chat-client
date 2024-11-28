@@ -4,9 +4,10 @@ import ChatMessageList from '../components/chatmessagelist'
 import { TextField, Box, Modal, Button } from '@mui/material';
 import {RotatingSquare} from 'react-loader-spinner';
 import { useLocation } from 'react-router-dom';
+import DOMPurify from 'dompurify';
+import Joi from 'joi';
 
 const ChatPage = () => {
-
 
 const alreadyConnected = useRef(false);
 const outputDiv = useRef();
@@ -32,23 +33,33 @@ const location = useLocation();
 
 useEffect(() => {
 
+    const parseBoolean = (value) => {
+        if (value === "true") return true;
+        if (value === "false" || !value) return false;
+        throw new Error(`Invalid boolean parameter: ${value}`);
+      };
+
+      const validationSchema = Joi.object({
+        ecampusontarioName: Joi.string().alphanum().optional(),
+        user: Joi.string().alphanum().optional(),
+        embed: Joi.boolean().optional()
+      });
+
     
     const queryParams = new URLSearchParams(location.search);
-    const bookId = queryParams.get('ecampusontarioName');
-    const userId = queryParams.get('user');
-    const embedded = queryParams.get('embed');
-    if (embedded){
-        setState({embedded: true});
-    }
-    if (bookId && userId){
-        getBookInfo(bookId, userId);
-    }
-    else {
-        
-        // For now make Fanshawe SOAR the default book
-        getBookInfo("fanshawesoar", "jben");
+    const bookId = queryParams.get('ecampusontarioName') || 'fanshawesoar';
+    const userId = queryParams.get('user') || 'jben';
+    const embedded = parseBoolean(queryParams.get('embed')) || false;
+    const enteredParams = {ecampusontarioName: bookId, user: userId, embed: embedded};
+    const {error} = validationSchema.validate(enteredParams);
+    if (error){
+        setState({errorMessage: error.details[0].message, showErrorModal: true});
+        return;
     }
 
+    setState({embedded: embedded});
+    getBookInfo(bookId, userId);
+    
 }, [location.search]);
 
 useEffect(() => {
@@ -79,8 +90,8 @@ const getBookInfo = async (bookId, userId) => {
         else {
 
             setState({bookName: result.bookName, bookURL: result.bookURL, chatIntro: result.chatIntro});
-            console.log("Book Name: %o", result.bookName);
-            console.log("Book URL: %o", result.bookURL);
+            console.log("Book Name: %o", DOMPurify.sanitize(result.bookName));
+            console.log("Book URL: %o", DOMPurify.sanitize(result.bookURL));
         }
 };
 
@@ -108,7 +119,7 @@ const connectToServer = ()=>{
 const socketEmit = ()=>{
 
     state.socket.emit("query", {query_string: state.query, title: state.bookName});
-    state.socket.on("response", (response) => {console.info("%o", response); setState({response: response.response_string, showSpinner: false, messages: [...state.messages, {from: "student-user", text: state.query}, {from: "chatbot", text: response.response_string}]})});
+    state.socket.on("response", (response) => {console.info("%o", response); const responseStr = DOMPurify.sanitize(response.response_string); setState({response: responseStr, showSpinner: false, messages: [...state.messages, {from: "student-user", text: state.query}, {from: "chatbot", text: responseStr}]})});
 };
 
 const handleSendMessage = ()=>{
@@ -157,9 +168,10 @@ return (
     <TextField
         fullWidth={true}
         style={{marginBottom: "1.5rem"}}
-        onChange={(e) => {setState({query: e.target.value})}}
+        onChange={(e) => {setState({query: DOMPurify.sanitize(e.target.value)})}}
         placeholder={state.chatIntro}
         autoFocus={true}
+        maxChars={500}
         required
         onKeyPress={(e) => {
             if (e.key === "Enter") {
