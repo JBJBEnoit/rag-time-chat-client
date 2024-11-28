@@ -23,15 +23,15 @@ jobs:
       # Step 3: Add a CSP header to the output
       - name: Add CSP Header
         run: |
-          echo '/ Content-Security-Policy: 
-          default-src \'self\'; 
-          script-src \'self\'; 
-          connect-src \'self\' wss://rag-time-production.up.railway.app/ https://rag-time-production.up.railway.app/; 
-          img-src \'self\'; 
-          style-src \'self\' \'unsafe-inline\'; 
-          font-src \'self\'; 
-          object-src \'none\'; 
-          frame-src \'none\';' > ./build/_headers
+            echo "Content-Security-Policy: \
+            default-src 'self'; \
+            script-src 'self'; \
+            connect-src 'self' https://rag-time-production.up.railway.app; \
+            img-src 'self'; \
+            style-src 'self' 'unsafe-inline'; \
+            font-src 'self'; \
+            object-src 'none'; \
+            frame-src 'none';" > ./build/_headers
 
       # Step 4: Deploy to GitHub Pages
       - name: Upload artifact for deployment
