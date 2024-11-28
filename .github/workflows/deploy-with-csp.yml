@@ -14,6 +14,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    environment:
+      name: github-pages
+
     steps:
       # Step 1: Checkout your code
       - name: Checkout repository
