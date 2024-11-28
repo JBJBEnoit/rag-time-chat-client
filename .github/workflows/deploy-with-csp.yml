@@ -19,12 +19,15 @@ jobs:
       # Step 1: Checkout your code
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      # Step 2: Build your site (if needed)
-      - name: Build site
+    
+      - name: Set up environment variables for build
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          REACT_APP_HOST: ${{ secrets.REACT_APP_HOST }}
         run: |
-          npm ci
-          npm run build # Adjust this to match your build script
+          run: |
+          npm install
+          npm run build
 
       # Step 3: Add a CSP header to the output
       - name: Add CSP Header
