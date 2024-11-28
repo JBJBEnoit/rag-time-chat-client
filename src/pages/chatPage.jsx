@@ -21,22 +21,26 @@ const initialState = {
     bookURL: null,
     showErrorModal: false,
     errorMessage: '',
-    chatIntro: ''
+    chatIntro: '',
+    embedded: false
 }
 
 const reducer = (state, newState) => ({...state, ...newState});
 const [state, setState] = useReducer(reducer, initialState);
-const instructions = "You are a helpful academic success advisor at Fanshawe College. Please answer student questions about how to be a successful student at Fanshawe College. Please base your answers to any inquiries on the provided context from the FanshaweSOAR textbook.";
 const location = useLocation();
+
 
 useEffect(() => {
 
+    
     const queryParams = new URLSearchParams(location.search);
-    const bookId = queryParams.get('id');
+    const bookId = queryParams.get('ecampusontarioName');
     const userId = queryParams.get('user');
+    const embedded = queryParams.get('embed');
+    if (embedded){
+        setState({embedded: true});
+    }
     if (bookId && userId){
-        console.log("Book ID: %o", bookId);
-        console.log("User ID: %o", userId);
         getBookInfo(bookId, userId);
     }
     else {
@@ -142,7 +146,7 @@ const handleSendMessage = ()=>{
 
 return (
     <>
-    { state.bookName ? <div className="chatContainer">
+    { state.bookName ? <div className="chatContainer" style={{paddingLeft: (!state.embedded ? '15%' : 0), paddingRight: (!state.embedded ? '15%' : 0)}}>
     <h2 style={{color: "#b3272d"}}>Chat About {state.bookName}</h2>
     <p>This chatbot provides responses based on the <a href={state.bookURL} target="_blank" rel="noreferrer">{state.bookName}</a> text</p>
     <div className="usersList">
