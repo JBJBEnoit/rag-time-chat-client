@@ -10,7 +10,6 @@ import Joi from 'joi';
 const ChatPage = () => {
 
 const alreadyConnected = useRef(false);
-const outputDiv = useRef();
 
 const initialState = {
     socket: {},
