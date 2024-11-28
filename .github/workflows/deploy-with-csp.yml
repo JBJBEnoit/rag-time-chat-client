@@ -5,6 +5,10 @@ on:
     branches:
       - main # Adjust this to your default branch name
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
