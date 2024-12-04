@@ -131,7 +131,7 @@ const LibraryAdmin = () => {
                     <p>Book ID: {state.bookId}</p>
                     </div>
                     <p>Access your book at:</p> 
-                    <p><a href={`${process.env.REACT_APP_HOST}#?id=${state.bookId}&user=${state.users[0]}`}>{process.env.REACT_APP_HOST}#?id={state.bookId}&user={state.users[0]}</a></p>
+                    <p><a href={`${process.env.REACT_APP_HOST}#?ecampusontarioName=${state.bookId}&user=${state.users[0]}`}>{process.env.REACT_APP_HOST}#?id={state.bookId}&user={state.users[0]}</a></p>
                     <Button onClick={clear} variant="contained">Add Another Book</Button>
                     </div>}
                 </div>
