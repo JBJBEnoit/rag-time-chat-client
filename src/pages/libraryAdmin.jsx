@@ -1,6 +1,7 @@
 import React, {useReducer, useRef} from 'react';
 import {TextField, Button, Modal} from '@mui/material';
 import { RotatingSquare } from 'react-loader-spinner';
+import DOMPurfiy from 'dompurify';
 
 const LibraryAdmin = () => {
 
@@ -108,19 +109,19 @@ const LibraryAdmin = () => {
             <div className='adminContainer'>
                 <h1>RAGTime Library Admin</h1>
                 <h2>Add Book</h2>
-                <TextField className='adminTextInput' label="Book URL" value={state.bookUrl} onChange={(e) => setState({bookUrl: e.target.value})} />
+                <TextField inputProps={{ maxLength: 100 }} className='adminTextInput' label="Book URL" value={state.bookUrl} onChange={(e) => setState({bookUrl: DOMPurfiy.sanitize(e.target.value)})} />
                 <div id="usersAdded" style={{borderRadius: "15px", width: "30%", backgroundColor: "#efefef", padding: 10}}>
                     <div style={{display: "flex", justifyContent: "center"}}>
                     <h3>Users</h3>
                     </div>
                     {state.users.length > 0 ? state.users.map((user, index) => <p key={index} style={{paddingLeft: "2rem"}}>{user}</p>) : <p style={{textAlign: "center"}}>No users added</p>}
                 </div>
-                <TextField label="User" value={state.currentUserToAdd} onChange={(e) => setState({currentUserToAdd: e.target.value})} />
+                <TextField label="User" inputProps={{ maxLength: 50 }} value={state.currentUserToAdd} onChange={(e) => setState({currentUserToAdd: DOMPurfiy.sanitize(e.target.value)})} />
                 <Button onClick={() => setState({users: [...state.users, state.currentUserToAdd], currentUserToAdd: ''})}>Add User</Button>
-                <TextField label="Role Instructions" multiline={true} value={state.instructions} onChange={(e) => setState({instructions: e.target.value})} />
-                <TextField label="Chat Greeting" multiline={true} value={state.chatGreeting} onChange={(e) => setState({chatGreeting: e.target.value})} />
-                <TextField label="Admin Username" value={state.username} onChange={(e) => setState({username: e.target.value})} />
-                <TextField label="Admin Password" type="password" value={state.password} onChange={(e) => setState({password: e.target.value})} />
+                <TextField label="Role Instructions" inputProps={{ maxLength: 1200 }} multiline={true} value={state.instructions} onChange={(e) => setState({instructions: DOMPurfiy.sanitize(e.target.value)})} />
+                <TextField label="Chat Greeting" inputProps={{ maxLength: 500 }} multiline={true} value={state.chatGreeting} onChange={(e) => setState({chatGreeting: DOMPurfiy.sanitize(e.target.value)})} />
+                <TextField label="Admin Username" inputProps={{ maxLength: 50 }} value={state.username} onChange={(e) => setState({username: DOMPurfiy.sanitize(e.target.value)})} />
+                <TextField label="Admin Password" inputProps={{ maxLength: 50 }} type="password" value={state.password} onChange={(e) => setState({password: DOMPurfiy.sanitize(e.target.value)})} />
                 <Button onClick={addBook}>Add Book</Button>
                 <div ref={bookDetails} style={{backgroundColor: "#eee", borderRadius: "15px", padding: "5px"}}>
                     {state.bookTitle && state.bookTitle.length > 0 && <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
@@ -130,7 +131,7 @@ const LibraryAdmin = () => {
                     <p>Book ID: {state.bookId}</p>
                     </div>
                     <p>Access your book at:</p> 
-                    <p><a href={`${process.env.REACT_APP_HOST}#?id=${state.bookId}&user=${state.users[0]}}`}>{process.env.REACT_APP_HOST}#?id=${state.bookId}&user={state.users[0]}</a></p>
+                    <p><a href={`${process.env.REACT_APP_HOST}#?id=${state.bookId}&user=${state.users[0]}`}>{process.env.REACT_APP_HOST}#?id={state.bookId}&user={state.users[0]}</a></p>
                     <Button onClick={clear} variant="contained">Add Another Book</Button>
                     </div>}
                 </div>
